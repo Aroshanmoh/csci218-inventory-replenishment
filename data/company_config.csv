@@ -1,0 +1,5 @@
+setting,value
+purchasing_budget,50000
+warehouse_capacity,6500
+planning_horizon_days,30
+currency,USD
