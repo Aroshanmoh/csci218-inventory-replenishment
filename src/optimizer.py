@@ -244,10 +244,12 @@ def optimize_orders(
     model += pulp.lpSum(base[product.sku] + order[product.sku] for product in items) <= capacity
 
     active_solver = solver or pulp.HiGHS(msg=False)
+    solver_name = getattr(active_solver, "name", type(active_solver).__name__)
     available = getattr(active_solver, "available", None)
     if callable(available) and not available():
         raise RuntimeError(
-            "CBC solver is unavailable. Install the project requirements or add CBC to PATH."
+            f"{solver_name} solver is unavailable. Install the project requirements "
+            f"or ensure {solver_name} is installed and accessible."
         )
 
     def solve(stage: str) -> float:
@@ -255,8 +257,8 @@ def optimize_orders(
             status_code = model.solve(active_solver)
         except Exception as error:
             raise RuntimeError(
-                f"Could not run the CBC solver during the {stage} stage. "
-                "Install the project requirements and CBC support."
+                f"Could not run the {solver_name} solver during the {stage} stage. "
+                f"Check that {solver_name} is installed and supported."
             ) from error
         status = pulp.LpStatus.get(status_code, "Unknown")
         if status != "Optimal":
