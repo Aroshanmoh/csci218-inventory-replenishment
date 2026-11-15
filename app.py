@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import math
 from visualizations import render_kpi_card, plot_budget_trend, plot_order_quantities, plot_baseline_comparison
 from src.optimizer import optimize_orders
 from src.baseline import baseline_replenishment, allocate_stock
@@ -98,9 +99,9 @@ if page == ":material/bar_chart:":
                 
                 if "safety_stock" in df.columns:
                     if policy == "Conservative":
-                        df["safety_stock"] = (df["safety_stock"] * 1.5).astype(int)
+                        df["safety_stock"] = (df["safety_stock"] * 1.5).apply(math.ceil)
                     elif policy == "Aggressive":
-                        df["safety_stock"] = (df["safety_stock"] * 0.5).astype(int)
+                        df["safety_stock"] = (df["safety_stock"] * 0.5).apply(math.floor)
 
                 validate_inventory_data(df)
                 raw_products = df.to_dict(orient="records")
