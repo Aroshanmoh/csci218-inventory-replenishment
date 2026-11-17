@@ -1,4 +1,4 @@
-"""Rule-based baseline retained for a consistent model comparison."""
+"""baseline"""
 
 from __future__ import annotations
 
@@ -129,7 +129,7 @@ def baseline_replenishment(
 
 
 def allocate_stock(inventory, available_stock=None, orders=None, planning_days=None):
-    """Member 3's priority allocation; orders arriving after the horizon are ignored."""
+    
     products = _rows(inventory)
     products.sort(key=lambda product: -_number(product, "priority"))
     orders = orders or {}
@@ -165,3 +165,66 @@ def allocate_stock(inventory, available_stock=None, orders=None, planning_days=N
         )
     return results
 
+
+def greedy_base(invetory, company_config, planning_horizon_days=non) -> dict[str, Any]:
+    """ order up greedy baseline """
+    products = _rows(inventory)
+    horizon = planning_horizon_days or _number(company_config, "planning_horizon_days")
+    budget_left = _number(company_config, "purchasing_budget")
+    capacity = _number(company_config, "warehouse_capacity")
+    warehouse_left = max(0, capacity - sum(
+        _number(p, "current_stock") + _number(p, "incoming_stock") for p in products
+    ))
+
+def target(p):
+    goal = _number(p, "expected_demand") + _number(p, "safety_stock")
+    max_stock = _number(p, "max_stock")
+    return min(goal, max_stock) if max_stock > 0 else goal 
+
+def gap(p):
+    return max (0, target(p) - _number(p, "current_stock") - _number(p, "incoming_stock"))
+
+products.sort(key=lambda p: (-_number(p, "priority"), -gap(p)))
+    recommendations = []
+    for p in products:
+        sku = p.get("sku_id", "Unknown")
+        available = _number(p, "current_stock") + _number(p, "incoming_stock")
+        moq, multiple = _number(p, "moq"), _number(p, "order_multiple")
+        unit_cost, max_stock = _number(p, "unit_cost"), _number(p, "max_stock")
+        lead_time = _number(p, "lead_time_days")
+        arrives = lead_time <= horizon
+        quantity = 0
+        if arrives and gap(p) > 0 and multiple > 0 and unit_cost > 0:
+            wanted = ceil(max(gap(p), moq) / multiple) * multiple
+            room = max(0, max_stock - available) if max_stock > 0 else warehouse_left
+            limit = min(room, warehouse_left, floor((budget_left + 1e-9) / unit_cost))
+            quantity = min(wanted, floor(limit / multiple) * multiple)
+            if quantity < moq:
+                quantity = 0
+        quantity = int(quantity)
+        budget_left -= quantity * unit_cost
+        warehouse_left -= quantity
+        if not arrives:
+            reason = "Lead time exceeds the horizon; no order in this plan."
+        elif gap(p) == 0:
+            reason = "Available stock already meets the target level."
+        elif quantity == 0:
+            reason = "Budget, capacity or max_stock left no room for a valid lot."
+        else:
+            reason = "Ordered up to target, rounded to a valid lot."
+        recommendations.append({
+            "sku": sku, "sku_id": sku, "product_name": p.get("product_name", sku),
+            "priority": _number(p, "priority"), "order_quantity": quantity,
+            "purchase_cost": quantity * unit_cost, "explanation": reason,
+        })
+
+return {
+    "status" : "Completed",
+    "recommendation" : recommendations,
+    "summary" : {
+        "total_spent": sum(r["purchase_cost"] for r in recommendations),
+        "budget_left": budget_left,
+        "total_units": sum(r["order_quantity"] for r in recommendations),
+    },
+}
+        
