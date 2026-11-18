@@ -6,7 +6,6 @@ from dataclasses import dataclass
 import math
 from typing import Any, Iterable, Mapping, Optional
 
-import pulp
 
 
 @dataclass(frozen=True)
@@ -163,9 +162,17 @@ def optimize_orders(
     budget: float,
     warehouse_capacity: int,
     planning_horizon_days: int = 30,
-    solver: Optional[pulp.LpSolver] = None,
+    solver: Optional[Any] = None,
 ) -> dict[str, Any]:
     """Minimize weighted target shortage, then excess, then purchase cost."""
+    try:
+        import pulp
+    except ImportError as error:
+        raise RuntimeError(
+            "PuLP is required to run the optimizer. Install dependencies with "
+            "'python -m pip install -r requirements.txt'."
+        ) from error
+
     horizon = _integer(planning_horizon_days, "planning_horizon_days")
     if horizon <= 0:
         raise ValueError("planning_horizon_days must be positive")
@@ -243,13 +250,11 @@ def optimize_orders(
     model += pulp.lpSum(product.unit_cost * order[product.sku] for product in items) <= budget
     model += pulp.lpSum(base[product.sku] + order[product.sku] for product in items) <= capacity
 
-    active_solver = solver or pulp.HiGHS(msg=False)
-    solver_name = getattr(active_solver, "name", type(active_solver).__name__)
+    active_solver = solver or pulp.COIN_CMD(msg=False)
     available = getattr(active_solver, "available", None)
     if callable(available) and not available():
         raise RuntimeError(
-            f"{solver_name} solver is unavailable. Install the project requirements "
-            f"or ensure {solver_name} is installed and accessible."
+            "CBC solver is unavailable. Install the project requirements or add CBC to PATH."
         )
 
     def solve(stage: str) -> float:
@@ -257,8 +262,8 @@ def optimize_orders(
             status_code = model.solve(active_solver)
         except Exception as error:
             raise RuntimeError(
-                f"Could not run the {solver_name} solver during the {stage} stage. "
-                f"Check that {solver_name} is installed and supported."
+                f"Could not run the CBC solver during the {stage} stage. "
+                "Install the project requirements and CBC support."
             ) from error
         status = pulp.LpStatus.get(status_code, "Unknown")
         if status != "Optimal":
@@ -278,12 +283,14 @@ def optimize_orders(
     )
     model.setObjective(weighted_shortage)
     best_shortage = solve("weighted shortage")
-    model += weighted_shortage == best_shortage
+    # A small tolerance avoids false infeasibility from floating-point solver
+    # tolerances while preserving the first-stage optimum.
+    model += weighted_shortage <= best_shortage + 1e-7
 
     total_excess = pulp.lpSum(excess[product.sku] for product in items)
     model.setObjective(total_excess)
     best_excess = solve("excess inventory")
-    model += total_excess == best_excess
+    model += total_excess <= best_excess + 1e-7
 
     total_cost = pulp.lpSum(
         product.unit_cost * order[product.sku]
