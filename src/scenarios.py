@@ -34,9 +34,15 @@ def run_comparison(inventory, config):
 
 
 def _scaled_inventory(inventory, demand_multiplier):
+    try:
+        multiplier = float(demand_multiplier)
+    except (TypeError, ValueError, OverflowError) as error:
+        raise ValueError("Demand multiplier must be a finite positive number.") from error
+    if not math.isfinite(multiplier) or multiplier <= 0:
+        raise ValueError("Demand multiplier must be a finite positive number.")
     result = inventory.copy()
     result["expected_demand"] = result["expected_demand"].map(
-        lambda value: int(math.ceil(float(value) * demand_multiplier))
+        lambda value: int(math.ceil(float(value) * multiplier))
     )
     return result
 
