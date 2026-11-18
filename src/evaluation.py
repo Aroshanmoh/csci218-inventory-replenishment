@@ -19,10 +19,14 @@ def evaluate_plan(inventory, plan, planning_horizon_days, budget):
     """Score a plan with Member 3's allocation logic and common target metrics."""
     rows = _rows(inventory)
     recommendation_rows = plan.get("recommendations", [])
-    recommendations = {
-        str(row.get("sku_id", row.get("sku", ""))).strip().upper(): row
-        for row in recommendation_rows
-    }
+    recommendations = {}
+    for row in recommendation_rows:
+        sku = str(row.get("sku_id", row.get("sku", ""))).strip().upper()
+        if not sku:
+            raise ValueError("Every plan recommendation must include a SKU identifier.")
+        if sku in recommendations:
+            raise ValueError(f"Duplicate recommendation for SKU: {sku}")
+        recommendations[sku] = row
     orders = {
         sku: int(float(row.get("order_quantity", 0) or 0))
         for sku, row in recommendations.items()
@@ -107,7 +111,7 @@ def evaluate_plan(inventory, plan, planning_horizon_days, budget):
         "metrics": {
             "planned_order_units": total_units,
             "planned_purchase_cost": total_cost,
-            "budget_remaining": float(budget) - total_cost,
+            "budget_remaining": max(0.0, float(budget) - total_cost),
             "budget_utilization": (
                 0.0 if budget == 0 else total_cost / float(budget)
             ),
