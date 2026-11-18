@@ -36,6 +36,8 @@ def load_inventory_data(file_path):
 
     try:
         data = pd.read_csv(file_path)
+        if data.empty:
+            raise ValueError("Inventory CSV contains no product rows.")
         print("Inventory data loaded successfully.")
         return data
 
@@ -43,6 +45,8 @@ def load_inventory_data(file_path):
         raise FileNotFoundError(
             f"Inventory file was not found: {file_path}"
         )
+    except ValueError:
+        raise
 
     except Exception as error:
         raise Exception(
@@ -229,13 +233,14 @@ def load_company_config(file_path):
             "Company config must contain 'setting' and 'value' columns."
         )
 
-    config = dict(
-        zip(
-            config_data["setting"],
-            config_data["value"]
-        )
-    )
-
+    settings = config_data["setting"].astype("string").str.strip()
+    if settings.isna().any() or settings.eq("").any():
+        raise ValueError("Company config setting names cannot be blank.")
+    normalized = settings.str.lower()
+    if normalized.duplicated().any():
+        duplicates = sorted(normalized[normalized.duplicated(keep=False)].unique().tolist())
+        raise ValueError(f"Duplicate company config settings: {duplicates}")
+    config = dict(zip(normalized, config_data["value"]))
     return config
 
 def validate_company_config(config):
@@ -274,15 +279,11 @@ def validate_company_config(config):
     if not all(pd.notna(x) and abs(x) != float("inf") for x in (purchasing_budget, warehouse_capacity, planning_horizon_days)):
         raise ValueError("Budget, capacity and planning horizon must be finite.")
 
-    if purchasing_budget <= 0:
-        raise ValueError(
-            "Purchasing budget must be greater than zero."
-        )
+    if purchasing_budget < 0:
+        raise ValueError("Purchasing budget cannot be negative.")
 
-    if warehouse_capacity <= 0:
-        raise ValueError(
-            "Warehouse capacity must be greater than zero."
-        )
+    if warehouse_capacity < 0:
+        raise ValueError("Warehouse capacity cannot be negative.")
 
     if planning_horizon_days <= 0:
         raise ValueError(
@@ -337,7 +338,7 @@ def prepare_project_data(inventory_file, config_file):
 
     company_config["currency"] = str(
         company_config["currency"]
-    )
+    ).strip().upper()
 
     return inventory, company_config
 
