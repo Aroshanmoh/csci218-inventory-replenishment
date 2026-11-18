@@ -10,6 +10,7 @@ import pandas as pd
 
 from src.data_loader import prepare_project_data
 from src.scenarios import run_comparison, run_standard_scenarios
+from src.experiments import run_experiments, summarize_experiments
 
 ROOT = Path(__file__).resolve().parent
 
@@ -19,6 +20,9 @@ def main():
     parser.add_argument("--inventory", type=Path, default=ROOT / "data" / "inventory_data.csv")
     parser.add_argument("--config", type=Path, default=ROOT / "data" / "company_config.csv")
     parser.add_argument("--no-save", action="store_true", help="Print results without writing result files.")
+    parser.add_argument("--experiments", action="store_true", help="Run Member 5 repeatable experiments.")
+    parser.add_argument("--experiment-count", type=int, default=30, help="Number of generated experiments (default: 30).")
+    parser.add_argument("--seed", type=int, default=42, help="Random seed for reproducible experiments.")
     parser.add_argument(
         "--scenarios",
         action="store_true",
@@ -51,6 +55,18 @@ def main():
         "explanation",
     ]
     print(recommendations[columns].to_string(index=False))
+
+    experiment_results = None
+    if args.experiments:
+        experiment_results = run_experiments(
+            inventory,
+            config,
+            n_scenarios=args.experiment_count,
+            seed=args.seed,
+            output_path=(ROOT / "results" / "member5_experiment_results.csv") if not args.no_save else None,
+        )
+        print("\\nMEMBER 5 EXPERIMENT SUMMARY")
+        print(summarize_experiments(experiment_results).to_string(index=False))
 
     scenario_results = None
     if args.scenarios:
@@ -108,6 +124,8 @@ def main():
         pd.DataFrame(output).to_csv(result_dir / "recommendations.csv", index=False)
         if scenario_results is not None:
             scenario_results.to_csv(result_dir / "scenario_comparison.csv", index=False)
+        if experiment_results is not None:
+            experiment_results.to_csv(result_dir / "member5_experiment_results.csv", index=False)
         print(f"\nSaved results to {result_dir}")
 
 
