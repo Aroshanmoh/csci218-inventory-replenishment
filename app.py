@@ -65,7 +65,7 @@ if page == ":material/bar_chart:":
         with st.container(border=True):
             st.markdown("**Enter Product Data**")
             uploaded_file = st.file_uploader("Upload Master Inventory CSV", type=["csv"])
-            # Demo safety net: run without depending on a file upload.
+        
             use_sample = st.checkbox("Use bundled sample data (data/inventory_data.csv)", value=uploaded_file is None)
 
             if uploaded_file is not None and not use_sample:
@@ -197,7 +197,7 @@ elif page == ":material/compare_arrows:":
     if st.session_state['results_df'] is None or st.session_state['raw_data'] is None:
         st.warning("Please run the optimizer first.")
     else:
-        # Run Member 3's baseline replenishment engine
+        
         config = {
             "purchasing_budget": st.session_state['budget'],
             "warehouse_capacity": st.session_state['capacity'],
@@ -208,7 +208,7 @@ elif page == ":material/compare_arrows:":
 
         baseline_summary = baseline_res["summary"]
         
-        # Calculate baseline fill rate using Member 3's stock allocation function
+      
         orders_dict = {r["sku_id"]: r["order_quantity"] for r in baseline_res["recommendations"]}
         allocations = allocate_stock(
             st.session_state['raw_data'],
