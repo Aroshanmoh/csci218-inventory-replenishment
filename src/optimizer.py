@@ -205,6 +205,14 @@ def optimize_orders(
         for product in items
     }
 
+    try:
+        import pulp
+    except ImportError as error:
+        raise ImportError(
+            "The MILP optimizer requires PuLP and HiGHS. "
+            "Install project dependencies with: python -m pip install -r requirements.txt"
+        ) from error
+
     model = pulp.LpProblem("Inventory_Replenishment", pulp.LpMinimize)
     order: dict[str, pulp.LpVariable] = {}
     active: dict[str, pulp.LpVariable] = {}
