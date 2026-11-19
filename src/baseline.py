@@ -1,4 +1,4 @@
-"""Rule-based baseline retained for a consistent model comparison."""
+
 
 from __future__ import annotations
 
@@ -26,14 +26,14 @@ def _number(product, field):
 def baseline_replenishment(
     inventory, company_config, planning_horizon_days=None
 ) -> dict[str, Any]:
-    """Create a priority-ordered reorder plan using fixed replenishment rules."""
+
     products = _rows(inventory)
     try:
         budget_left = float(company_config["purchasing_budget"])
         warehouse_capacity = float(company_config["warehouse_capacity"])
     except (KeyError, TypeError, ValueError, OverflowError) as error:
         raise ValueError(
-            "Company config must include numeric purchasing_budget and warehouse_capacity values."
+         
         ) from error
     if not isfinite(budget_left) or not isfinite(warehouse_capacity):
         raise ValueError("Budget and warehouse capacity must be finite numbers.")
@@ -96,8 +96,7 @@ def baseline_replenishment(
 
         quantity = 0
         arrives = lead_time <= horizon
-        # Only place orders that can arrive within this planning horizon.
-        # This keeps baseline and optimizer comparisons like-for-like.
+     
         if needed > 0 and multiple > 0 and unit_cost > 0 and arrives:
             wanted = ceil(max(needed, moq) / multiple) * multiple
             budget_limit = floor((budget_left + 1e-9) / unit_cost)
