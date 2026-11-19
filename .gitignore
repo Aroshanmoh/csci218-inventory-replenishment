@@ -16,3 +16,5 @@ env/
 
 # Mac files
 .DS_Store
+# Local experiment outputs are regenerated; committed results live in results/
+.ipynb_checkpoints/

@@ -1,4 +1,16 @@
+"""Constraint-optimisation model of the replenishment problem, solved with HiGHS.
 
+Formulation (one decision variable per SKU i):
+    q_i  in D_i = {0} U {k * multiple_i : k integer, k * multiple_i >= MOQ_i, <= U_i}
+    sum_i cost_i * q_i            <= budget            (global budget constraint)
+    sum_i (stock_i + incoming_i + q_i) <= capacity     (global capacity constraint)
+    stock_i + incoming_i + q_i    <= max_stock_i        (unary constraint)
+
+The objective is lexicographic: (1) priority-weighted shortage to target,
+(2) units above target, (3) purchase cost. Each stage is solved as a MILP
+and its optimum is locked (with a small tolerance) before the next stage.
+``src/csp_solver.py`` solves the same model with our own search for comparison.
+"""
 
 from __future__ import annotations
 
@@ -6,6 +18,7 @@ from dataclasses import dataclass
 import math
 from typing import Any, Iterable, Mapping, Optional
 
+import pulp
 
 
 @dataclass(frozen=True)
@@ -23,6 +36,8 @@ class Product:
     max_inventory: Optional[int] = None
     product_name: Optional[str] = None
 
+
+LOCK_TOLERANCE = 1e-6
 
 INTEGER_FIELDS = (
     "current_stock", "demand", "moq", "order_multiple", "lead_time_days",
@@ -113,6 +128,36 @@ def _to_product(raw: Product | Mapping[str, Any]) -> Product:
     )
 
 
+URGENCY_MODES = ("priority_lead", "priority")
+
+
+def urgency_weight(product: Product, horizon: int, mode: str = "priority_lead") -> float:
+    """Shortage weight per unit.
+
+    "priority_lead": priority * (1 + lead_time / horizon). Longer lead times
+        mean a stock-out lasts longer before a new order can land, so a unit
+        short on a slow-to-replenish SKU is weighted as more costly.
+    "priority": priority only (used in the sensitivity analysis).
+    """
+    if mode == "priority_lead":
+        return product.priority * (1 + product.lead_time_days / horizon)
+    if mode == "priority":
+        return float(product.priority)
+    raise ValueError(f"urgency mode must be one of {URGENCY_MODES}")
+
+
+def next_cycle_lot(product: Product, base: int, target: float) -> int:
+    """Smallest valid lot that covers the gap to target, capped by max_stock."""
+    gap = max(0, target - base)
+    if gap <= 0:
+        return 0
+    lot = math.ceil(max(gap, product.moq) / product.order_multiple) * product.order_multiple
+    if product.max_inventory is not None:
+        room = product.max_inventory - base
+        lot = min(lot, room // product.order_multiple * product.order_multiple)
+    return lot if lot >= product.moq else 0
+
+
 def validate_inputs(
     products: Iterable[Product | Mapping[str, Any]],
     budget: float,
@@ -162,16 +207,10 @@ def optimize_orders(
     budget: float,
     warehouse_capacity: int,
     planning_horizon_days: int = 30,
-    solver: Optional[Any] = None,
+    solver: Optional[pulp.LpSolver] = None,
+    urgency_mode: str = "priority_lead",
 ) -> dict[str, Any]:
-   
-    try:
-        import pulp
-    except ImportError as error:
-        raise RuntimeError(
-   
-        ) from error
-
+    """Minimize weighted target shortage, then excess, then purchase cost."""
     horizon = _integer(planning_horizon_days, "planning_horizon_days")
     if horizon <= 0:
         raise ValueError("planning_horizon_days must be positive")
@@ -226,10 +265,12 @@ def optimize_orders(
         upper = min(budget_bound, capacity_for_orders)
         if product.max_inventory is not None:
             upper = min(upper, max(0, product.max_inventory - base[sku]))
-
+        # The shared evaluation horizon counts only orders that can arrive in time.
         if not arrives_within_horizon[sku]:
             upper = 0
 
+        # Every order is zero or a supplier multiple that is at least the MOQ.
+        # MOQ is a lower bound, not an additive first order tranche.
         model += order[sku] == product.order_multiple * multiple_count[sku]
         model += order[sku] >= product.moq * active[sku]
         model += order[sku] <= upper * active[sku]
@@ -239,18 +280,19 @@ def optimize_orders(
         )
         model += horizon_inventory + shortage[sku] - excess[sku] == target[sku]
 
-  
+        # Existing overstock is accepted. It prevents further orders but is not
+        # treated as invalid input or forced below the per-SKU maximum.
         if product.max_inventory is not None and base[sku] <= product.max_inventory:
             model += base[sku] + order[sku] <= product.max_inventory
 
     model += pulp.lpSum(product.unit_cost * order[product.sku] for product in items) <= budget
     model += pulp.lpSum(base[product.sku] + order[product.sku] for product in items) <= capacity
 
-    active_solver = solver or pulp.COIN_CMD(msg=False)
+    active_solver = solver or pulp.HiGHS(msg=False)
     available = getattr(active_solver, "available", None)
     if callable(available) and not available():
         raise RuntimeError(
-            "CBC solver is unavailable. Install the project requirements or add CBC to PATH."
+            "HiGHS solver is unavailable. Install the project requirements (highspy)."
         )
 
     def solve(stage: str) -> float:
@@ -258,8 +300,8 @@ def optimize_orders(
             status_code = model.solve(active_solver)
         except Exception as error:
             raise RuntimeError(
-                f"Could not run the CBC solver during the {stage} stage. "
-                "Install the project requirements and CBC support."
+                f"Could not run the HiGHS solver during the {stage} stage. "
+                "Install the project requirements (highspy)."
             ) from error
         status = pulp.LpStatus.get(status_code, "Unknown")
         if status != "Optimal":
@@ -270,7 +312,7 @@ def optimize_orders(
         return float(pulp.value(model.objective) or 0)
 
     urgency = {
-        product.sku: product.priority * (1 + product.lead_time_days / horizon)
+        product.sku: urgency_weight(product, horizon, urgency_mode)
         for product in items
     }
     weighted_shortage = pulp.lpSum(
@@ -279,13 +321,14 @@ def optimize_orders(
     )
     model.setObjective(weighted_shortage)
     best_shortage = solve("weighted shortage")
-
-    model += weighted_shortage <= best_shortage + 1e-7
+    # Lock stage 1 with a tolerance: an exact float equality can make the
+    # next stage spuriously infeasible because of solver rounding.
+    model += weighted_shortage <= best_shortage + LOCK_TOLERANCE
 
     total_excess = pulp.lpSum(excess[product.sku] for product in items)
     model.setObjective(total_excess)
     best_excess = solve("excess inventory")
-    model += total_excess <= best_excess + 1e-7
+    model += total_excess <= best_excess + LOCK_TOLERANCE
 
     total_cost = pulp.lpSum(
         product.unit_cost * order[product.sku]
@@ -311,7 +354,16 @@ def optimize_orders(
         if is_overstock:
             explanation = "Existing stock is already above max_stock; no additional order."
         elif not arrives_within_horizon[sku]:
-            explanation = "Supplier lead time exceeds this horizon; no order is placed in this plan."
+            lot = next_cycle_lot(product, base[sku], target[sku])
+            if lot:
+                explanation = (
+                    f"ORDER NOW FOR NEXT CYCLE: lead time ({product.lead_time_days} days) exceeds the "
+                    f"{horizon}-day horizon, so this order cannot help the current plan, but without it "
+                    f"the next cycle starts short. Suggested {lot} units "
+                    f"(${lot * product.unit_cost:,.2f}), not funded by this plan's budget."
+                )
+            else:
+                explanation = "Supplier lead time exceeds this horizon and stock already covers the target."
         elif quantity:
             explanation = "Order respects the MOQ, supplier multiple, budget, capacity, and max_stock."
         else:
@@ -341,6 +393,10 @@ def optimize_orders(
             "is_existing_overstock": is_overstock,
             "unit_cost": product.unit_cost,
             "purchase_cost": quantity * product.unit_cost,
+            "next_cycle_order": (
+                next_cycle_lot(product, base[sku], target[sku])
+                if not arrives_within_horizon[sku] and not is_overstock else 0
+            ),
             "explanation": explanation,
         })
 
@@ -371,6 +427,10 @@ def optimize_orders(
             ),
             "priority_weighted_shortage": best_shortage,
             "total_excess_inventory": best_excess,
+            "next_cycle_order_units": sum(row["next_cycle_order"] for row in recommendations),
+            "next_cycle_order_cost": sum(
+                row["next_cycle_order"] * row["unit_cost"] for row in recommendations
+            ),
             "demand_fill_rate": (
                 1.0 if total_demand == 0 else total_fulfilled / total_demand
             ),

@@ -1,0 +1,271 @@
+n_skus,seed,configuration,status,nodes,runtime_s
+6,3006000,Full (BT + FC + B&B + dominance + ordering),Optimal,31,0.0002333759999828544
+6,3006000,without branch & bound,Optimal,1773,0.0015556619999870236
+6,3006000,without forward checking,Optimal,112,0.00028603900000234717
+6,3006000,without dominance pruning,Optimal,38,0.0002199449999125136
+6,3006000,without variable ordering,Optimal,13,0.0001474130000360674
+6,3006000,plain backtracking,Optimal,4078,0.0018565730000545955
+6,3006001,Full (BT + FC + B&B + dominance + ordering),Optimal,17,0.00016932599999108788
+6,3006001,without branch & bound,Optimal,68,0.00018903500006217655
+6,3006001,without forward checking,Optimal,20,0.00015408000001571054
+6,3006001,without dominance pruning,Optimal,27,0.00019876500005011621
+6,3006001,without variable ordering,Optimal,12,0.00012616200001502875
+6,3006001,plain backtracking,Optimal,545,0.00029950900000130787
+6,3006002,Full (BT + FC + B&B + dominance + ordering),Optimal,95,0.0004971350000460006
+6,3006002,without branch & bound,Optimal,1655,0.0014288179999084605
+6,3006002,without forward checking,Optimal,152,0.00040489399998477893
+6,3006002,without dominance pruning,Optimal,104,0.0005380359999662687
+6,3006002,without variable ordering,Optimal,87,0.0004201300000659103
+6,3006002,plain backtracking,Optimal,12332,0.00447996000002604
+6,3006003,Full (BT + FC + B&B + dominance + ordering),Optimal,408,0.001977831999965929
+6,3006003,without branch & bound,Optimal,54736,0.04461076500001582
+6,3006003,without forward checking,Optimal,926,0.002069086000005882
+6,3006003,without dominance pruning,Optimal,1272,0.005395678000013504
+6,3006003,without variable ordering,Optimal,233,0.0008104869999669972
+6,3006003,plain backtracking,Optimal,123520,0.04333094399999027
+6,3006004,Full (BT + FC + B&B + dominance + ordering),Optimal,18,0.0001766420000421931
+6,3006004,without branch & bound,Optimal,146,0.0002053360000218163
+6,3006004,without forward checking,Optimal,18,0.00012474700008624495
+6,3006004,without dominance pruning,Optimal,322,0.0009277090000523458
+6,3006004,without variable ordering,Optimal,18,0.00016944399999374582
+6,3006004,plain backtracking,Optimal,972,0.0007012309999936406
+6,3006005,Full (BT + FC + B&B + dominance + ordering),Optimal,41,0.00028167899995423795
+6,3006005,without branch & bound,Optimal,905,0.0007991019999735727
+6,3006005,without forward checking,Optimal,70,0.00020493200008786516
+6,3006005,without dominance pruning,Optimal,129,0.0005494289999887769
+6,3006005,without variable ordering,Optimal,49,0.00019689099997322046
+6,3006005,plain backtracking,Optimal,12640,0.004695399999945948
+6,3006006,Full (BT + FC + B&B + dominance + ordering),Optimal,9,0.00016228399999818066
+6,3006006,without branch & bound,Optimal,37,0.00011981799991644948
+6,3006006,without forward checking,Optimal,13,0.00010582599998087971
+6,3006006,without dominance pruning,Optimal,9,9.921000003032532e-05
+6,3006006,without variable ordering,Optimal,9,0.00011740000002191664
+6,3006006,plain backtracking,Optimal,121,0.00014163200000893994
+6,3006007,Full (BT + FC + B&B + dominance + ordering),Optimal,256,0.0012884610000583052
+6,3006007,without branch & bound,NodeLimit,200000,0.16358909899997798
+6,3006007,without forward checking,Optimal,478,0.0009319799999047973
+6,3006007,without dominance pruning,Optimal,2323,0.01054501699991306
+6,3006007,without variable ordering,Optimal,2348,0.005035107000026073
+6,3006007,plain backtracking,NodeLimit,200057,0.036707098999954724
+6,3006008,Full (BT + FC + B&B + dominance + ordering),Optimal,138,0.0005507450000550307
+6,3006008,without branch & bound,Optimal,46548,0.03349493900009293
+6,3006008,without forward checking,Optimal,533,0.000580174999981864
+6,3006008,without dominance pruning,Optimal,541,0.001757577999910609
+6,3006008,without variable ordering,Optimal,64,0.0003664300000991716
+6,3006008,plain backtracking,NodeLimit,200023,0.058606434000012086
+6,3006009,Full (BT + FC + B&B + dominance + ordering),Optimal,58,0.00037054699998861906
+6,3006009,without branch & bound,Optimal,72836,0.05436394200000905
+6,3006009,without forward checking,Optimal,92,0.00032104900003560033
+6,3006009,without dominance pruning,Optimal,967,0.004048828999998477
+6,3006009,without variable ordering,Optimal,357,0.0012936650000483496
+6,3006009,plain backtracking,NodeLimit,200000,0.08118683800000781
+6,3006010,Full (BT + FC + B&B + dominance + ordering),Optimal,36,0.0003185360000088622
+6,3006010,without branch & bound,Optimal,629,0.0006099480000330004
+6,3006010,without forward checking,Optimal,40,0.0002265120000402021
+6,3006010,without dominance pruning,Optimal,36,0.00027767299991410255
+6,3006010,without variable ordering,Optimal,69,0.0003693200000043362
+6,3006010,plain backtracking,Optimal,4296,0.0019584269999768367
+6,3006011,Full (BT + FC + B&B + dominance + ordering),Optimal,154,0.0007851430000300752
+6,3006011,without branch & bound,Optimal,29645,0.024764940999943974
+6,3006011,without forward checking,Optimal,1245,0.0012604040000496752
+6,3006011,without dominance pruning,Optimal,471,0.001961016999985077
+6,3006011,without variable ordering,Optimal,186,0.000830782999969415
+6,3006011,plain backtracking,Optimal,157130,0.060669523999990815
+6,3006012,Full (BT + FC + B&B + dominance + ordering),Optimal,38,0.0002517640000405663
+6,3006012,without branch & bound,Optimal,1206,0.0011050519999571407
+6,3006012,without forward checking,Optimal,67,0.0001825150000058784
+6,3006012,without dominance pruning,Optimal,65,0.00035691800007953134
+6,3006012,without variable ordering,Optimal,180,0.0006044900000006237
+6,3006012,plain backtracking,Optimal,1688,0.0007907650000333888
+6,3006013,Full (BT + FC + B&B + dominance + ordering),Optimal,41,0.0002563220000411093
+6,3006013,without branch & bound,Optimal,5607,0.004905668999981572
+6,3006013,without forward checking,Optimal,170,0.0003651060000038342
+6,3006013,without dominance pruning,Optimal,41,0.0002327670000568105
+6,3006013,without variable ordering,Optimal,679,0.0021167280000327082
+6,3006013,plain backtracking,Optimal,6975,0.0029863400000067486
+6,3006014,Full (BT + FC + B&B + dominance + ordering),Optimal,55,0.00041783500000747154
+6,3006014,without branch & bound,Optimal,71747,0.055367113999977846
+6,3006014,without forward checking,Optimal,82,0.0003329669999629914
+6,3006014,without dominance pruning,Optimal,1024,0.00400907300002018
+6,3006014,without variable ordering,Optimal,1157,0.0036297890000014377
+6,3006014,plain backtracking,Optimal,153212,0.06281947100001162
+8,3008000,Full (BT + FC + B&B + dominance + ordering),Optimal,132,0.0007392459999664425
+8,3008000,without branch & bound,NodeLimit,200000,0.1574893870000551
+8,3008000,without forward checking,Optimal,395,0.000696522999987792
+8,3008000,without dominance pruning,Optimal,177,0.0009519520000367265
+8,3008000,without variable ordering,Optimal,3067,0.014601203999973222
+8,3008000,plain backtracking,NodeLimit,200007,0.08288290400003007
+8,3008001,Full (BT + FC + B&B + dominance + ordering),Optimal,530,0.0027092169999605176
+8,3008001,without branch & bound,NodeLimit,200000,0.155889583999965
+8,3008001,without forward checking,Optimal,2285,0.004125961999989158
+8,3008001,without dominance pruning,Optimal,6676,0.0346516500000007
+8,3008001,without variable ordering,Optimal,25125,0.09510780699997667
+8,3008001,plain backtracking,NodeLimit,200033,0.03762202200005049
+8,3008002,Full (BT + FC + B&B + dominance + ordering),Optimal,50,0.00039436299994122237
+8,3008002,without branch & bound,Optimal,1026,0.0009047669999517893
+8,3008002,without forward checking,Optimal,57,0.0003131910000320204
+8,3008002,without dominance pruning,Optimal,75,0.0004788730000200303
+8,3008002,without variable ordering,Optimal,50,0.00035900199998195603
+8,3008002,plain backtracking,NodeLimit,200000,0.07233607499995287
+8,3008003,Full (BT + FC + B&B + dominance + ordering),Optimal,58,0.0003940430000284323
+8,3008003,without branch & bound,Optimal,789,0.0008685589999686272
+8,3008003,without forward checking,Optimal,63,0.0002892100000053688
+8,3008003,without dominance pruning,Optimal,129,0.0005830380000588775
+8,3008003,without variable ordering,Optimal,55,0.00018932099999346974
+8,3008003,plain backtracking,Optimal,1737,0.0009498889999122184
+8,3008004,Full (BT + FC + B&B + dominance + ordering),Optimal,173,0.0011098659999788651
+8,3008004,without branch & bound,NodeLimit,200000,0.16981922000002214
+8,3008004,without forward checking,Optimal,358,0.0008835669999598394
+8,3008004,without dominance pruning,Optimal,1685,0.009304286999963551
+8,3008004,without variable ordering,Optimal,13971,0.06098508100001254
+8,3008004,plain backtracking,NodeLimit,200020,0.04359827899997981
+8,3008005,Full (BT + FC + B&B + dominance + ordering),Optimal,12,0.0001845880000246325
+8,3008005,without branch & bound,Optimal,70,0.00017043699995156203
+8,3008005,without forward checking,Optimal,18,0.0001433499999166088
+8,3008005,without dominance pruning,Optimal,19,0.00023599099995408324
+8,3008005,without variable ordering,Optimal,20,0.00018815999999333144
+8,3008005,plain backtracking,Optimal,297,0.00024036499996782368
+8,3008006,Full (BT + FC + B&B + dominance + ordering),Optimal,69,0.0004525330000433314
+8,3008006,without branch & bound,Optimal,35212,0.02943623999999545
+8,3008006,without forward checking,Optimal,69,0.00037804199996571697
+8,3008006,without dominance pruning,Optimal,12253,0.044131901000014295
+8,3008006,without variable ordering,Optimal,69,0.0004627360000313274
+8,3008006,plain backtracking,NodeLimit,200000,0.07478220300004068
+8,3008007,Full (BT + FC + B&B + dominance + ordering),Optimal,48,0.00032011100006457127
+8,3008007,without branch & bound,Optimal,313,0.0003663100000039776
+8,3008007,without forward checking,Optimal,57,0.00031219000004512054
+8,3008007,without dominance pruning,Optimal,249,0.000984265000056439
+8,3008007,without variable ordering,Optimal,51,0.00028684599999451166
+8,3008007,plain backtracking,Optimal,1987,0.0010150199999543474
+8,3008008,Full (BT + FC + B&B + dominance + ordering),Optimal,119,0.0008015949999844452
+8,3008008,without branch & bound,Optimal,146369,0.11919554999997217
+8,3008008,without forward checking,Optimal,216,0.0005966449999732504
+8,3008008,without dominance pruning,Optimal,119,0.0007673720000411777
+8,3008008,without variable ordering,Optimal,368,0.001943867000022692
+8,3008008,plain backtracking,NodeLimit,200022,0.05836784699999953
+8,3008009,Full (BT + FC + B&B + dominance + ordering),Optimal,3423,0.012921002999974007
+8,3008009,without branch & bound,NodeLimit,200000,0.1743218720000641
+8,3008009,without forward checking,Optimal,6258,0.014400209999962499
+8,3008009,without dominance pruning,Optimal,5953,0.026209508999954778
+8,3008009,without variable ordering,Optimal,1308,0.007495724000023074
+8,3008009,plain backtracking,NodeLimit,200001,0.054292056000008415
+8,3008010,Full (BT + FC + B&B + dominance + ordering),Optimal,266,0.0016657469999472596
+8,3008010,without branch & bound,Optimal,16624,0.014594935999980407
+8,3008010,without forward checking,Optimal,451,0.0013099029999921186
+8,3008010,without dominance pruning,Optimal,759,0.004735801000038009
+8,3008010,without variable ordering,Optimal,232,0.0012393539999493441
+8,3008010,plain backtracking,Optimal,135329,0.04376767500002643
+8,3008011,Full (BT + FC + B&B + dominance + ordering),Optimal,63,0.0004859399999759262
+8,3008011,without branch & bound,Optimal,1686,0.001421393999976317
+8,3008011,without forward checking,Optimal,63,0.0003575350000346589
+8,3008011,without dominance pruning,Optimal,6284,0.01491066599999158
+8,3008011,without variable ordering,Optimal,63,0.00046595200001320336
+8,3008011,plain backtracking,Optimal,132352,0.08393437600000198
+8,3008012,Full (BT + FC + B&B + dominance + ordering),Optimal,29,0.0003168120000509589
+8,3008012,without branch & bound,Optimal,2828,0.0024112599999170925
+8,3008012,without forward checking,Optimal,64,0.00019525499999417661
+8,3008012,without dominance pruning,Optimal,52,0.0003519150000101945
+8,3008012,without variable ordering,Optimal,902,0.0033771660000638803
+8,3008012,plain backtracking,Optimal,136148,0.05516048000004048
+8,3008013,Full (BT + FC + B&B + dominance + ordering),Optimal,44,0.0003296979999731775
+8,3008013,without branch & bound,Optimal,396,0.000423976999968545
+8,3008013,without forward checking,Optimal,63,0.00033375800001067546
+8,3008013,without dominance pruning,Optimal,122,0.0005886650000093141
+8,3008013,without variable ordering,Optimal,47,0.00024169300002085947
+8,3008013,plain backtracking,Optimal,3119,0.0014998159999777272
+8,3008014,Full (BT + FC + B&B + dominance + ordering),Optimal,69,0.0004988629999616023
+8,3008014,without branch & bound,Optimal,2576,0.002616266000018186
+8,3008014,without forward checking,Optimal,97,0.0004490879999821118
+8,3008014,without dominance pruning,Optimal,316,0.001732822999997552
+8,3008014,without variable ordering,Optimal,146,0.0003275490000760328
+8,3008014,plain backtracking,Optimal,19147,0.005796598000074482
+10,3010000,Full (BT + FC + B&B + dominance + ordering),Optimal,31,0.0003414270000803299
+10,3010000,without branch & bound,Optimal,157895,0.14211653600000318
+10,3010000,without forward checking,Optimal,126,0.0006822999999940293
+10,3010000,without dominance pruning,Optimal,120,0.0015149590000191893
+10,3010000,without variable ordering,Optimal,36,0.0005472210000334599
+10,3010000,plain backtracking,NodeLimit,200000,0.09703711400004522
+10,3010001,Full (BT + FC + B&B + dominance + ordering),Optimal,112,0.0008508310000934216
+10,3010001,without branch & bound,Optimal,26883,0.02295040899991818
+10,3010001,without forward checking,Optimal,170,0.000796676999925694
+10,3010001,without dominance pruning,Optimal,640,0.0039084759999923335
+10,3010001,without variable ordering,Optimal,401,0.0031221130000176345
+10,3010001,plain backtracking,Optimal,152250,0.09080853599994043
+10,3010002,Full (BT + FC + B&B + dominance + ordering),Optimal,62,0.00045655999997507024
+10,3010002,without branch & bound,Optimal,1632,0.0016064589999587042
+10,3010002,without forward checking,Optimal,83,0.0004266869999582923
+10,3010002,without dominance pruning,Optimal,238,0.0013195889999906285
+10,3010002,without variable ordering,Optimal,108,0.0002556739999590718
+10,3010002,plain backtracking,Optimal,17596,0.005472417999953905
+10,3010003,Full (BT + FC + B&B + dominance + ordering),Optimal,195,0.0013336570000319625
+10,3010003,without branch & bound,NodeLimit,200000,0.18974868599991623
+10,3010003,without forward checking,Optimal,460,0.0015329320000319058
+10,3010003,without dominance pruning,Optimal,1165,0.007634475000031671
+10,3010003,without variable ordering,Optimal,732,0.0033389039999747183
+10,3010003,plain backtracking,NodeLimit,200003,0.05226858399998946
+10,3010004,Full (BT + FC + B&B + dominance + ordering),Optimal,189,0.0012527259999615126
+10,3010004,without branch & bound,NodeLimit,200000,0.17394546999992144
+10,3010004,without forward checking,Optimal,307,0.00111498199999005
+10,3010004,without dominance pruning,Optimal,793,0.004909908000058749
+10,3010004,without variable ordering,Optimal,1959,0.004165740000075857
+10,3010004,plain backtracking,NodeLimit,200000,0.047469443999943906
+10,3010005,Full (BT + FC + B&B + dominance + ordering),Optimal,22,0.00022339999998166604
+10,3010005,without branch & bound,Optimal,775,0.0007397350000246661
+10,3010005,without forward checking,Optimal,22,0.00017430200000490004
+10,3010005,without dominance pruning,Optimal,353,0.0013343370000029608
+10,3010005,without variable ordering,Optimal,22,0.00018872099997224723
+10,3010005,plain backtracking,Optimal,129633,0.05531691999999566
+10,3010006,Full (BT + FC + B&B + dominance + ordering),Optimal,34,0.00035415199999988545
+10,3010006,without branch & bound,Optimal,2233,0.001956567000092946
+10,3010006,without forward checking,Optimal,37,0.0002811749999409585
+10,3010006,without dominance pruning,Optimal,101,0.0007103440000264527
+10,3010006,without variable ordering,Optimal,96,0.0003467700000783225
+10,3010006,plain backtracking,Optimal,17415,0.0057527620000428215
+10,3010007,Full (BT + FC + B&B + dominance + ordering),Optimal,419,0.002281435999975656
+10,3010007,without branch & bound,NodeLimit,200000,0.16233167200005028
+10,3010007,without forward checking,Optimal,571,0.0018544329999485853
+10,3010007,without dominance pruning,Optimal,1531,0.008838899000011224
+10,3010007,without variable ordering,Optimal,220,0.0010903449999659642
+10,3010007,plain backtracking,NodeLimit,200000,0.0767378230000304
+10,3010008,Full (BT + FC + B&B + dominance + ordering),Optimal,55,0.00043257300001187104
+10,3010008,without branch & bound,Optimal,4657,0.0039105879999397075
+10,3010008,without forward checking,Optimal,93,0.00036318700006177096
+10,3010008,without dominance pruning,Optimal,317,0.0017683570000599502
+10,3010008,without variable ordering,Optimal,133,0.0008007840000345823
+10,3010008,plain backtracking,NodeLimit,200006,0.06537813800002823
+10,3010009,Full (BT + FC + B&B + dominance + ordering),Optimal,153,0.0010304800000540126
+10,3010009,without branch & bound,NodeLimit,200000,0.15047516499998892
+10,3010009,without forward checking,Optimal,311,0.0007635840000830285
+10,3010009,without dominance pruning,Optimal,454,0.0026704570000219974
+10,3010009,without variable ordering,Optimal,101981,0.4018112899999551
+10,3010009,plain backtracking,NodeLimit,200002,0.050277182999934666
+10,3010010,Full (BT + FC + B&B + dominance + ordering),Optimal,262,0.0016575399999965157
+10,3010010,without branch & bound,NodeLimit,200000,0.18787248599994655
+10,3010010,without forward checking,Optimal,329,0.0013349350000453342
+10,3010010,without dominance pruning,Optimal,818,0.0049619950000305835
+10,3010010,without variable ordering,Optimal,2587,0.01618467299999793
+10,3010010,plain backtracking,NodeLimit,200005,0.05714547399998082
+10,3010011,Full (BT + FC + B&B + dominance + ordering),Optimal,84,0.0005857419999983904
+10,3010011,without branch & bound,Optimal,2115,0.0018706219999558016
+10,3010011,without forward checking,Optimal,137,0.0005290489999651982
+10,3010011,without dominance pruning,Optimal,321,0.002106415000071138
+10,3010011,without variable ordering,Optimal,181,0.000912666000090212
+10,3010011,plain backtracking,Optimal,106626,0.04334633700000268
+10,3010012,Full (BT + FC + B&B + dominance + ordering),Optimal,113,0.0008207299999867246
+10,3010012,without branch & bound,Optimal,81145,0.07011470400004782
+10,3010012,without forward checking,Optimal,159,0.0007538040000554247
+10,3010012,without dominance pruning,Optimal,487,0.002722439999956805
+10,3010012,without variable ordering,Optimal,512,0.0016427939999630325
+10,3010012,plain backtracking,NodeLimit,200000,0.07939150800007155
+10,3010013,Full (BT + FC + B&B + dominance + ordering),Optimal,59,0.00045416700004352606
+10,3010013,without branch & bound,Optimal,33692,0.024475027999983467
+10,3010013,without forward checking,Optimal,107,0.0003577530000029583
+10,3010013,without dominance pruning,Optimal,742,0.0026028800000403862
+10,3010013,without variable ordering,Optimal,293,0.0018756700000039928
+10,3010013,plain backtracking,NodeLimit,200004,0.06690740999999889
+10,3010014,Full (BT + FC + B&B + dominance + ordering),Optimal,33,0.00033811000002970104
+10,3010014,without branch & bound,Optimal,273,0.0003820080000878079
+10,3010014,without forward checking,Optimal,50,0.0002881619999470786
+10,3010014,without dominance pruning,Optimal,170,0.0010643210000580439
+10,3010014,without variable ordering,Optimal,79,0.0005745700000261422
+10,3010014,plain backtracking,Optimal,5737,0.00204326100003982

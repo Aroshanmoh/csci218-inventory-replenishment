@@ -1,4 +1,4 @@
-
+"""One shared evaluation function, applied identically to every method's plan."""
 
 from __future__ import annotations
 
@@ -16,16 +16,13 @@ def _rows(inventory):
 
 
 def evaluate_plan(inventory, plan, planning_horizon_days, budget):
+    """Score a plan with Member 3's allocation logic and common target metrics."""
     rows = _rows(inventory)
     recommendation_rows = plan.get("recommendations", [])
-    recommendations = {}
-    for row in recommendation_rows:
-        sku = str(row.get("sku_id", row.get("sku", ""))).strip().upper()
-        if not sku:
-            raise ValueError("Every plan recommendation must include a SKU identifier.")
-        if sku in recommendations:
-            raise ValueError(f"Duplicate recommendation for SKU: {sku}")
-        recommendations[sku] = row
+    recommendations = {
+        str(row.get("sku_id", row.get("sku", ""))).strip().upper(): row
+        for row in recommendation_rows
+    }
     orders = {
         sku: int(float(row.get("order_quantity", 0) or 0))
         for sku, row in recommendations.items()
@@ -110,7 +107,7 @@ def evaluate_plan(inventory, plan, planning_horizon_days, budget):
         "metrics": {
             "planned_order_units": total_units,
             "planned_purchase_cost": total_cost,
-            "budget_remaining": max(0.0, float(budget) - total_cost),
+            "budget_remaining": float(budget) - total_cost,
             "budget_utilization": (
                 0.0 if budget == 0 else total_cost / float(budget)
             ),
@@ -129,12 +126,18 @@ def evaluate_plan(inventory, plan, planning_horizon_days, budget):
     }
 
 
-def compare_plans(inventory, baseline, optimized, planning_horizon_days, budget):
-    return {
-        "Baseline": evaluate_plan(
-            inventory, baseline, planning_horizon_days, budget
-        ),
-        "Constraint Optimizer": evaluate_plan(
-            inventory, optimized, planning_horizon_days, budget
-        ),
+METHOD_NAMES = ("Reorder-point baseline", "Greedy baseline", "Constraint Optimizer")
+
+
+def compare_plans(inventory, baseline, optimized, planning_horizon_days, budget, greedy=None):
+    """Score every plan with the same evaluation function.
+
+    The greedy plan is optional so the original two-plan call still works.
+    """
+    scored = {
+        "Reorder-point baseline": evaluate_plan(inventory, baseline, planning_horizon_days, budget),
     }
+    if greedy is not None:
+        scored["Greedy baseline"] = evaluate_plan(inventory, greedy, planning_horizon_days, budget)
+    scored["Constraint Optimizer"] = evaluate_plan(inventory, optimized, planning_horizon_days, budget)
+    return scored

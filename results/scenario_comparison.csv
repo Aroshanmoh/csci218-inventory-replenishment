@@ -1,0 +1,19 @@
+scenario,method,planned_order_units,planned_purchase_cost,budget_remaining,budget_utilization,projected_inventory_in_horizon,shortage_to_target_units,unfilled_demand_units,demand_fill_rate,excess_inventory_units,priority_weighted_shortage,total_demand,sku_count
+Base case,Reorder-point baseline,445,49800.0,200.0,0.996,3670,665,480,0.85,490,4469.333333333334,3200,12
+Base case,Greedy baseline,610,49550.0,450.0,0.991,3880,475,340,0.89375,510,3340.0,3200,12
+Base case,Constraint Optimizer,820,50000.0,0.0,1.0,4090,270,190,0.940625,515,2624.166666666667,3200,12
+Budget reduced by 30%,Reorder-point baseline,380,34350.0,650.0,0.9814285714285714,3650,685,480,0.85,490,4639.333333333334,3200,12
+Budget reduced by 30%,Greedy baseline,380,34350.0,650.0,0.9814285714285714,3650,685,480,0.85,490,4639.333333333334,3200,12
+Budget reduced by 30%,Constraint Optimizer,620,34900.0,100.0,0.9971428571428571,3890,425,240,0.925,470,3765.166666666667,3200,12
+Demand increased by 20%,Reorder-point baseline,505,49650.0,350.0,0.993,3760,919,702,0.8171875,194,6031.400000000001,3840,12
+Demand increased by 20%,Greedy baseline,565,49200.0,800.0,0.984,3835,844,627,0.83671875,194,5631.400000000001,3840,12
+Demand increased by 20%,Constraint Optimizer,900,49950.0,50.0,0.999,4170,505,348,0.909375,190,4404.0666666666675,3840,12
+Tight warehouse (room for 50% of needed units),Reorder-point baseline,445,49800.0,200.0,0.996,3670,665,480,0.85,490,4469.333333333334,3200,12
+Tight warehouse (room for 50% of needed units),Greedy baseline,520,45850.0,4150.0,0.917,3790,545,360,0.8875,490,3736.0000000000005,3200,12
+Tight warehouse (room for 50% of needed units),Constraint Optimizer,520,45850.0,4150.0,0.917,3790,545,360,0.8875,490,3736.0000000000005,3200,12
+Lead times +10 days,Reorder-point baseline,445,49800.0,200.0,0.996,3270,1045,770,0.759375,470,9567.666666666664,3200,12
+Lead times +10 days,Greedy baseline,525,23400.0,26600.0,0.468,3795,565,430,0.865625,515,6423.333333333332,3200,12
+Lead times +10 days,Constraint Optimizer,525,23400.0,26600.0,0.468,3795,565,430,0.865625,515,6423.333333333332,3200,12
+Current stock reduced by 75%,Reorder-point baseline,510,49400.0,600.0,0.988,1645,2215,1660,0.48125,15,10685.933333333334,3200,12
+Current stock reduced by 75%,Greedy baseline,550,49100.0,900.0,0.982,1695,2165,1610,0.496875,15,10419.266666666668,3200,12
+Current stock reduced by 75%,Constraint Optimizer,1750,49900.0,100.0,0.998,2895,1032,684,0.78625,82,7196.599999999999,3200,12
