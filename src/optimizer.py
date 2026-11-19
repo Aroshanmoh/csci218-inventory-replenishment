@@ -1,4 +1,4 @@
-"""Member 2's mixed-integer inventory optimizer, integrated with the project."""
+
 
 from __future__ import annotations
 
@@ -164,13 +164,12 @@ def optimize_orders(
     planning_horizon_days: int = 30,
     solver: Optional[Any] = None,
 ) -> dict[str, Any]:
-    """Minimize weighted target shortage, then excess, then purchase cost."""
+   
     try:
         import pulp
     except ImportError as error:
         raise RuntimeError(
-            "PuLP is required to run the optimizer. Install dependencies with "
-            "'python -m pip install -r requirements.txt'."
+   
         ) from error
 
     horizon = _integer(planning_horizon_days, "planning_horizon_days")
@@ -227,12 +226,10 @@ def optimize_orders(
         upper = min(budget_bound, capacity_for_orders)
         if product.max_inventory is not None:
             upper = min(upper, max(0, product.max_inventory - base[sku]))
-        # The shared evaluation horizon counts only orders that can arrive in time.
+
         if not arrives_within_horizon[sku]:
             upper = 0
 
-        # Every order is zero or a supplier multiple that is at least the MOQ.
-        # MOQ is a lower bound, not an additive first order tranche.
         model += order[sku] == product.order_multiple * multiple_count[sku]
         model += order[sku] >= product.moq * active[sku]
         model += order[sku] <= upper * active[sku]
@@ -242,8 +239,7 @@ def optimize_orders(
         )
         model += horizon_inventory + shortage[sku] - excess[sku] == target[sku]
 
-        # Existing overstock is accepted. It prevents further orders but is not
-        # treated as invalid input or forced below the per-SKU maximum.
+  
         if product.max_inventory is not None and base[sku] <= product.max_inventory:
             model += base[sku] + order[sku] <= product.max_inventory
 
@@ -283,8 +279,7 @@ def optimize_orders(
     )
     model.setObjective(weighted_shortage)
     best_shortage = solve("weighted shortage")
-    # A small tolerance avoids false infeasibility from floating-point solver
-    # tolerances while preserving the first-stage optimum.
+
     model += weighted_shortage <= best_shortage + 1e-7
 
     total_excess = pulp.lpSum(excess[product.sku] for product in items)
