@@ -18,7 +18,6 @@ from dataclasses import dataclass
 import math
 from typing import Any, Iterable, Mapping, Optional
 
-import pulp
 
 
 @dataclass(frozen=True)
@@ -207,7 +206,7 @@ def optimize_orders(
     budget: float,
     warehouse_capacity: int,
     planning_horizon_days: int = 30,
-    solver: Optional[pulp.LpSolver] = None,
+    solver: Optional[Any] = None,
     urgency_mode: str = "priority_lead",
 ) -> dict[str, Any]:
     """Minimize weighted target shortage, then excess, then purchase cost."""
@@ -242,6 +241,14 @@ def optimize_orders(
         product.sku: product.lead_time_days <= horizon
         for product in items
     }
+
+    try:
+        import pulp
+    except ImportError as error:
+        raise ImportError(
+            "The MILP optimizer requires PuLP and HiGHS. "
+            "Install project dependencies with: python -m pip install -r requirements.txt"
+        ) from error
 
     model = pulp.LpProblem("Inventory_Replenishment", pulp.LpMinimize)
     order: dict[str, pulp.LpVariable] = {}
