@@ -1,4 +1,4 @@
-"""Shared evaluation definitions for Member 2 and Member 3 plans."""
+
 
 from __future__ import annotations
 
@@ -16,7 +16,6 @@ def _rows(inventory):
 
 
 def evaluate_plan(inventory, plan, planning_horizon_days, budget):
-    """Score a plan with Member 3's allocation logic and common target metrics."""
     rows = _rows(inventory)
     recommendation_rows = plan.get("recommendations", [])
     recommendations = {}
