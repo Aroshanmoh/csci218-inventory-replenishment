@@ -1,8 +1,4 @@
-"""Member 5 experiment engine for repeatable baseline/optimizer comparisons.
 
-The same generated demand and budget scenario is applied to both methods.
-Scenario generation is deterministic for a given random seed.
-"""
 
 from __future__ import annotations
 
@@ -36,12 +32,7 @@ def generate_experiment_scenarios(
     minimum_multiplier: float = 0.8,
     maximum_multiplier: float = 1.2,
 ) -> list[dict[str, Any]]:
-    """Generate reproducible demand and budget multipliers.
 
-    Multipliers are sampled uniformly from [minimum_multiplier,
-    maximum_multiplier]. Each generated scenario is later shared by both
-    the baseline and optimizer, enabling an apples-to-apples comparison.
-    """
     if isinstance(n_scenarios, bool) or not isinstance(n_scenarios, int) or n_scenarios < 1:
         raise ValueError("n_scenarios must be a positive integer.")
     if isinstance(seed, bool) or not isinstance(seed, int):
@@ -85,12 +76,7 @@ def run_experiments(
     maximum_multiplier: float = 1.2,
     output_path: str | Path | None = None,
 ) -> pd.DataFrame:
-    """Run both replenishment methods across identical generated scenarios.
-
-    Returns a long-form DataFrame with two rows per scenario (Baseline and
-    Constraint Optimizer). If output_path is supplied, the results are
-    exported to CSV.
-    """
+  
     required_config = (
         "purchasing_budget",
         "warehouse_capacity",
@@ -171,11 +157,7 @@ def run_experiments(
 
 
 def summarize_experiments(results: pd.DataFrame) -> pd.DataFrame:
-    """Calculate descriptive mean, standard deviation, minimum and maximum.
-
-    The summary is descriptive only; it does not imply statistical
-    significance or prove that one method is universally better.
-    """
+    
     required = {"method", *METRICS}
     missing = required.difference(results.columns)
     if missing:
