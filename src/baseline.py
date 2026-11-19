@@ -1,4 +1,4 @@
-"""Traditional baselines: reorder-point policy (original) and greedy order-up-to (fair)."""
+
 
 from __future__ import annotations
 
