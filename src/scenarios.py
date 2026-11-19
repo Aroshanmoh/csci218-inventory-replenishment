@@ -1,4 +1,4 @@
-"""Repeatable scenario comparisons for budget, demand, and capacity changes."""
+
 
 from __future__ import annotations
 
@@ -48,7 +48,7 @@ def _scaled_inventory(inventory, demand_multiplier):
 
 
 def run_standard_scenarios(inventory, config):
-    """Compare both methods across six repeatable operating scenarios."""
+   
     current_stock = int(
         (inventory["current_stock"] + inventory["incoming_stock"]).sum()
     )
