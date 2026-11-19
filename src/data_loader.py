@@ -24,15 +24,7 @@ REQUIRED_COLUMNS = [
 
 
 def load_inventory_data(file_path):
-    """
-    Load inventory data from a CSV file.
-
-    Parameters:
-        file_path (str): Path to the inventory CSV file.
-
-    Returns:
-        pandas.DataFrame: Loaded inventory data.
-    """
+  
 
     try:
         data = pd.read_csv(file_path)
@@ -55,9 +47,6 @@ def load_inventory_data(file_path):
 
 
 def check_required_columns(data):
-    """
-    Check whether all required columns exist.
-    """
 
     missing_columns = [
         column
@@ -86,7 +75,7 @@ def check_duplicate_skus(data):
 
 
 def validate_numeric_fields(data):
-    """Reject missing, infinite, non-numeric and fractional integer fields."""
+   
     integer_columns = [
         "current_stock", "incoming_stock", "expected_demand", "moq",
         "order_multiple", "lead_time_days", "safety_stock", "max_stock", "priority"
@@ -115,11 +104,8 @@ def validate_priority(data):
     return True
 
 def validate_business_rules(data):
-    """
-    Validate logical relationships between inventory fields.
-    """
-
-    # Safety stock should not exceed maximum stock
+   
+   
     invalid_safety_stock = (
         data["safety_stock"] > data["max_stock"]
     )
@@ -134,16 +120,11 @@ def validate_business_rules(data):
             f"Safety stock exceeds max stock for SKUs: {invalid_skus}"
         )
 
-    # Existing stock above max_stock is an overstock condition, not invalid input.
-    # MOQ conflicts with max_stock are passed to the optimizer, which will avoid
-    # recommending an infeasible order rather than rejecting the entire dataset.
 
     return True
 
 def validate_inventory_data(data):
-    """
-    Run all inventory data validation checks.
-    """
+  
 
     check_required_columns(data)
     check_duplicate_skus(data)
@@ -157,10 +138,7 @@ def validate_inventory_data(data):
 
 
 def add_derived_metrics(data, planning_horizon_days):
-    """
-    Add calculated inventory metrics to the dataset.
-    """
-
+ 
     data["available_inventory"] = data.apply(
         lambda row: calculate_available_inventory(
             row["current_stock"],
@@ -201,19 +179,7 @@ def add_derived_metrics(data, planning_horizon_days):
     return data
 
 def load_company_config(file_path):
-    """
-    Load company-level configuration values from CSV.
-
-    Expected CSV format:
-        setting,value
-        purchasing_budget,50000
-        warehouse_capacity,6500
-        planning_horizon_days,30
-        currency,USD
-
-    Returns:
-        dict: Company configuration values.
-    """
+  
 
     try:
         config_data = pd.read_csv(file_path)
@@ -244,9 +210,7 @@ def load_company_config(file_path):
     return config
 
 def validate_company_config(config):
-    """
-    Validate required company-level configuration values.
-    """
+  
 
     required_settings = [
         "purchasing_budget",
@@ -300,30 +264,22 @@ def validate_company_config(config):
     return True
 
 def prepare_project_data(inventory_file, config_file):
-    """
-    Load, validate, enrich and package all project data
-    for use by the optimization module.
 
-    Returns:
-        tuple:
-            inventory (DataFrame)
-            company_config (dict)
-    """
 
-    # Load inventory
+  
     inventory = load_inventory_data(inventory_file)
 
-    # Validate inventory
+
     validate_inventory_data(inventory)
 
-    # Load and validate company configuration before calculating horizon-based metrics.
+   
     company_config = load_company_config(config_file)
     validate_company_config(company_config)
 
-    # Add calculated metrics using the same planning horizon as the optimizer.
+
     inventory = add_derived_metrics(inventory, int(float(company_config["planning_horizon_days"])))
 
-    # Convert configuration values to correct data types
+    
     company_config["purchasing_budget"] = float(
         company_config["purchasing_budget"]
     )
