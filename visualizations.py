@@ -44,7 +44,7 @@ def plot_order_quantities(df: pd.DataFrame) -> go.Figure:
     )
     return fig
 
-def plot_baseline_comparison(ai_metrics: dict, baseline_metrics: dict) -> go.Figure:
+def plot_baseline_comparison(ai_metrics: dict, baseline_metrics: dict, greedy_metrics: dict | None = None) -> go.Figure:
     categories = ["Fill Rate (%)", "Budget Utilization (%)"]
 
     fig = go.Figure()
@@ -68,6 +68,17 @@ def plot_baseline_comparison(ai_metrics: dict, baseline_metrics: dict) -> go.Fig
         name="Traditional Baseline",
         marker_color="#F28D77",
     ))
+
+    if greedy_metrics is not None:
+        fig.add_trace(go.Bar(
+            x=categories,
+            y=[
+                greedy_metrics["fill_rate"],
+                greedy_metrics["budget_efficiency"],
+            ],
+            name="Greedy Baseline",
+            marker_color="#9B8AFB",
+        ))
 
     fig.update_layout(
         template="plotly_dark",
