@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 from visualizations import render_kpi_card, plot_budget_trend, plot_order_quantities, plot_baseline_comparison
 from src.optimizer import optimize_orders
-from src.baseline import baseline_replenishment, allocate_stock
+from src.baseline import baseline_replenishment, greedy_replenishment, allocate_stock
 from src.scenarios import run_comparison
 from pathlib import Path
 from src.data_loader import prepare_project_data, validate_inventory_data
@@ -204,49 +204,65 @@ elif page == ":material/compare_arrows:":
             "planning_horizon_days": int(st.session_state['horizon']),
         }
         
-        baseline_res = baseline_replenishment(st.session_state['raw_data'], config)
+        inventory = st.session_state['raw_data']
+        horizon = int(st.session_state['horizon'])
+
+        # Run both traditional baselines using the same inventory and constraints.
+        baseline_res = baseline_replenishment(inventory, config)
+        greedy_res = greedy_replenishment(inventory, config)
 
         baseline_summary = baseline_res["summary"]
-        
-      
-        orders_dict = {r["sku_id"]: r["order_quantity"] for r in baseline_res["recommendations"]}
-        allocations = allocate_stock(
-            st.session_state['raw_data'],
-            orders=orders_dict,
-            planning_days=int(st.session_state['horizon']),
-        )
-        
-        total_demand = sum(a["demand"] for a in allocations)
-        total_allocated = sum(a["allocated"] for a in allocations)
-        baseline_fill_rate = (total_allocated / total_demand * 100) if total_demand > 0 else 100.0
-        
+        greedy_summary = greedy_res["summary"]
+
+        baseline_orders = {r["sku_id"]: r["order_quantity"] for r in baseline_res["recommendations"]}
+        greedy_orders = {r["sku_id"]: r["order_quantity"] for r in greedy_res["recommendations"]}
+
+        baseline_allocations = allocate_stock(inventory, orders=baseline_orders, planning_days=horizon)
+        greedy_allocations = allocate_stock(inventory, orders=greedy_orders, planning_days=horizon)
+
+        def calculate_fill_rate(allocations):
+            demand = sum(row["demand"] for row in allocations)
+            allocated = sum(row["allocated"] for row in allocations)
+            return allocated / demand * 100 if demand > 0 else 100.0
+
+        baseline_fill_rate = calculate_fill_rate(baseline_allocations)
+        greedy_fill_rate = calculate_fill_rate(greedy_allocations)
         ai_kpis = st.session_state['kpis']
-        
-        col1, col2 = st.columns(2)
+
+        col1, col2, col3 = st.columns(3)
         with col1:
             with st.container(border=True):
                 st.markdown("**Constraint AI (Our System)**")
                 st.metric("Total Budget Spent", f"${ai_kpis['spent']:,.0f}", f"Within Limit (${st.session_state['budget']:,})", delta_color="normal")
                 st.metric("Shortage After Order", f"{ai_kpis['unmet_shortage']:,} Units", "Optimized", delta_color="normal")
-                st.metric("Demand Fill Rate", f"{ai_kpis['fill_rate']:.1f}%", "High Service Level", delta_color="normal")
-                
+                st.metric("Demand Fill Rate", f"{ai_kpis['fill_rate']:.1f}%", "Portfolio optimization", delta_color="normal")
+
         with col2:
             with st.container(border=True):
-                st.markdown("**Traditional Baseline**")
+                st.markdown("**Reorder-point Baseline**")
                 st.metric("Total Budget Spent", f"${baseline_summary['total_spent']:,.0f}", f"Remaining: ${baseline_summary['budget_left']:,.0f}", delta_color="off")
-                st.metric("Shortage After Order", f"{baseline_summary['unmet_shortage']:,} Units", "Unmet Target Stock", delta_color="inverse")
-                st.metric("Demand Fill Rate", f"{baseline_fill_rate:.1f}%", "Baseline Allocation", delta_color="off")
-                
+                st.metric("Shortage After Order", f"{baseline_summary['unmet_shortage']:,} Units", "Unmet target stock", delta_color="inverse")
+                st.metric("Demand Fill Rate", f"{baseline_fill_rate:.1f}%", "Reorder-point allocation", delta_color="off")
+
+        with col3:
+            with st.container(border=True):
+                st.markdown("**Greedy Baseline**")
+                st.metric("Total Budget Spent", f"${greedy_summary['total_spent']:,.0f}", f"Remaining: ${greedy_summary['budget_left']:,.0f}", delta_color="off")
+                st.metric("Units Ordered", f"{greedy_summary['total_units']:,}", "Priority-by-priority decisions", delta_color="off")
+                st.metric("Demand Fill Rate", f"{greedy_fill_rate:.1f}%", "Greedy allocation", delta_color="off")
+
         st.markdown("<br>", unsafe_allow_html=True)
-        
+
         with st.container(border=True):
             st.markdown("**Performance Comparison Chart**")
             ai_efficiency = (ai_kpis['spent'] / st.session_state['budget'] * 100) if st.session_state['budget'] > 0 else 0
             base_efficiency = (baseline_summary['total_spent'] / st.session_state['budget'] * 100) if st.session_state['budget'] > 0 else 0
-            
+            greedy_efficiency = (greedy_summary['total_spent'] / st.session_state['budget'] * 100) if st.session_state['budget'] > 0 else 0
+
             fig_comp = plot_baseline_comparison(
                 ai_metrics={"fill_rate": ai_kpis['fill_rate'], "budget_efficiency": ai_efficiency},
-                baseline_metrics={"fill_rate": baseline_fill_rate, "budget_efficiency": base_efficiency}
+                baseline_metrics={"fill_rate": baseline_fill_rate, "budget_efficiency": base_efficiency},
+                greedy_metrics={"fill_rate": greedy_fill_rate, "budget_efficiency": greedy_efficiency},
             )
             st.plotly_chart(fig_comp, use_container_width=True, config={'displayModeBar': False})
         # All three methods scored by the same evaluation function (src/evaluation.py).
