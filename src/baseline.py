@@ -168,14 +168,7 @@ def allocate_stock(inventory, available_stock=None, orders=None, planning_days=N
 
 
 def greedy_replenishment(inventory, company_config, planning_horizon_days=None) -> dict[str, Any]:
-    """Fair traditional baseline: greedy order-up-to-target in priority order.
-
-    Same information and the same eligibility rule as the optimizer (orders
-    that cannot arrive within the horizon are not placed), but decisions are
-    made one SKU at a time instead of over the whole portfolio. This isolates
-    the value of portfolio optimisation from differences in the rules.
-    Ties in priority are broken by the larger shortage first.
-    """
+    """Fair traditional baseline: greedy order-up-to-target in priority order. """
     products = _rows(inventory)
     horizon = planning_horizon_days or _number(company_config, "planning_horizon_days")
     budget_left = _number(company_config, "purchasing_budget")
